@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<link rel="stylesheet" href="../resources/css/bootstrap3/bootstrap.min.css" 
+		type="text/css" media="all" />
+	<link rel="stylesheet" href="../resources/css/bootstrap3/bootstrap-theme.min.css" 
+		type="text/css" media="all" />
+	<script src="../resources/css/bootstrap3/bootstrap.min.js"></script>
+</h:head> 
+<h:body>
+<h:form id="formUsu">	
+	<!-- 
+		http://www.ciceroednilson.com.br/java-criando-um-web-service-rest-com-jersey-e-jpa/
+		https://demoisellelab.wordpress.com/2014/04/25/crud-e-rest-o-basico-das-aplicacoes/
+		
+		Importante:
+		https://www.mkyong.com/webservices/jax-rs/restfull-java-client-with-java-net-url/
+	 -->
+	
+	
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-6 text-center">
+				<h:graphicImage library="imagens" name="ustore.png" 
+					width="200px" height="200px"/>
+				<h2>Desafio 01 - UStore</h2>
+			</div>
+			<div class="col-sm-3"></div>
+		</div>
+	</div>
+	 
+	<div class="container" style="background-color: gray;">
+	
+		<p:menubar style="background-color: white;">
+	            <p:submenu label="Usuário(a)">
+					<p:menuitem value="Novo" onclick="PF('dlgNovoUsu').show()"/>
+				</p:submenu>
+	    </p:menubar>
+	
+		<p:dataTable id="usuarios" var="p" value="#{pessoaMB.colecaoPessoa}"
+			rowKey="#{p.id}" selection="#{pessoaMB.pessoaSel}" selectionMode="single">
+		    
+		    <p:column headerText="Id">
+		        <h:outputText value="#{p.id}" />
+		    </p:column>
+		    
+		    <p:column headerText="Nome">
+		        <h:outputText value="#{p.nome}" />
+		    </p:column>
+		 
+		    <p:column headerText="E-Mail">
+		        <h:outputText value="#{p.email}" />
+		    </p:column>
+		 
+		    <p:column headerText="Telefone">
+		        <h:outputText value="#{p.telefone}" />
+		    </p:column>
+		 
+		    <p:column headerText="Senha">
+		        <h:outputText value="#{p.senha}" />
+		    </p:column>
+		</p:dataTable>
+		
+		<p:contextMenu for="usuarios">
+	        <p:menuitem value="View" update="detalhe" icon="ui-icon-search" oncomplete="PF('userDialog').show()"/>
+	        <p:menuitem value="Delete" icon="ui-icon-trash"
+	        	action="#{pessoaMB.remover}" update="usuarios"/>
+	    </p:contextMenu>
+		
+		<p:dialog header="Informações" widgetVar="userDialog" modal="true"
+			 showEffect="fade" hideEffect="fade" resizable="false">
+	        <p:outputPanel id="detalhe" style="text-align:center;">
+	           <h:form>
+	            <p:panelGrid columns="2" columnClasses="label,value"
+	            	rendered="#{not empty pessoaMB.pessoaSel}" >
+	                <f:facet name="header">
+	                    <h:graphicImage library="imagens" name="usuarios.png"
+	                    	width="45px" height="45px"/> 
+	                </f:facet>
+	 
+	                <h:outputLabel value="Id:" />
+	                <h:outputText value="#{pessoaMB.pessoaSel.id}" />
+	 
+	 				<h:outputLabel value="Nome:" />
+	                <h:outputText value="#{pessoaMB.pessoaSel.nome}" />
+	 
+	                <h:outputLabel value="Email" />
+	                <h:outputText value="#{pessoaMB.pessoaSel.email}" />
+	                
+	                <h:outputLabel value="Senha:" />
+	                <h:outputText value="#{pessoaMB.pessoaSel.senha}" />
+	 
+	                <h:outputLabel value="Telefone:" />
+	                <h:outputText value="#{pessoaMB.pessoaSel.telefone}" />
+	            </p:panelGrid>
+	           </h:form>
+	        </p:outputPanel>
+	    </p:dialog>
+	</div>
+
+</h:form>
+
+	<p:dialog id="novo" showEffect="clip" hideEffect="clip" widgetVar="dlgNovoUsu"
+		header="Novo Usuário(a)" width="600px">
+		<p:ajax event="close" update=":formUsu:usuarios" />
+		<div class="row">
+			<h:form id="frmNovo">
+				<p:growl id="growl" showDetail="true" sticky="true" life="3500" />
+					
+				<p:outputLabel styleClass="col-lg-3" value="Nome" for="nomeUsuario"/>
+				<p:inputText value="#{pessoaMB.pessoa.nome}" styleClass="col-lg-9"
+					id="nomeUsuario" required="true"/>
+				<p:outputLabel styleClass="col-lg-3" value="E-mail" for="email"/>
+				<p:inputText value="#{pessoaMB.pessoa.email}" styleClass="col-lg-9"
+					id="email" required="true"/>
+				<p:outputLabel styleClass="col-lg-3" for="fone"
+					value="Telefone"/>
+				<p:inputText value="#{pessoaMB.pessoa.telefone}" 
+					styleClass="col-lg-9" id="fone" />
+				<p:outputLabel styleClass="col-lg-3" value="Senha" for="senha"/>
+				<p:inputText value="#{pessoaMB.pessoa.senha}" styleClass="col-lg-9"
+					id="senha" required="true"/>
+			
+				<p:commandButton value="Cadastrar" action="#{pessoaMB.cadastrar()}"
+					styleClass="col-lg-6" update="growl" style="text-align:center;"
+					oncomplete="PF('dlgNovoUsu').hide()"/>
+			</h:form>
+		</div>
+	</p:dialog>
+
+</h:body>
+   
+</html>
